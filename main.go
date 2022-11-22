@@ -1,19 +1,34 @@
 package main
 
 import (
-	humanize "github.com/dustin/go-humanize"
-	"github.com/minio/minio/pkg/disk"
+	"fmt"
+
+	human "github.com/dustin/go-humanize"
+	"github.com/shirou/gopsutil/disk"
 )
 
-func printUsage(path string) error {
-	di, err := disk.GetInfo(path)
-	if err != nil {
-		return err
+func main() {
+	formatter := "%-14s %7s %7s %7s %4s %s\n"
+	fmt.Printf(formatter, "Filesystem", "Size", "Used", "Avail", "Use%", "Mounted on")
+
+	parts, _ := disk.Partitions(true)
+	for _, p := range parts {
+		device := p.Mountpoint
+		s, _ := disk.Usage(device)
+
+		if s.Total == 0 {
+			continue
+		}
+
+		percent := fmt.Sprintf("%2.f%%", s.UsedPercent)
+
+		fmt.Printf(formatter,
+			s.Fstype,
+			human.Bytes(s.Total),
+			human.Bytes(s.Used),
+			human.Bytes(s.Free),
+			percent,
+			p.Mountpoint,
+		)
 	}
-	percentage := (float64(di.Total-di.Free) / float64(di.Total)) * 100
-	fmt.Printf("%s of %s disk space used (%0.2f%%)\n",
-		humanize.Bytes(di.Total-di.Free),
-		humanize.Bytes(di.Total),
-		percentage,
-	)
 }
