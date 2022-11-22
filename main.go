@@ -1,4 +1,4 @@
-package timecook
+package main
 
 import (
 	humanize "github.com/dustin/go-humanize"
