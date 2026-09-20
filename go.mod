@@ -1,9 +1,9 @@
 module example.com/hello
 
-go 1.19
+go 1.21
 
 require (
-	github.com/dustin/go-humanize v1.0.1
+	github.com/dustin/go-humanize v1.1.0
 	github.com/shirou/gopsutil v3.21.11+incompatible
 )
 
